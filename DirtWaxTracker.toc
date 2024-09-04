@@ -1,0 +1,8 @@
+## Interface: 110000, 110002
+## Title: Dirt Wax Tracker
+## Notes: Tracks looted items from Disturbed Dirt and spawn locations
+## Author: Andreas Baum
+## Version: 1.0.0
+
+DirtWaxTracker.xml
+DirtWaxTracker.lua
