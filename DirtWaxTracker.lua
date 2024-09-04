@@ -26,14 +26,18 @@ showCheckbox:SetPoint("TOPLEFT", startButton, "BOTTOMLEFT", 0, -10)
 showCheckbox.text:SetText("Show Map Icons")
 showCheckbox:SetChecked(true)
 
-local timerText = f:CreateFontString(nil, "OVERLAY")
+local timerFrame = CreateFrame("Frame", nil, f)
+timerFrame:SetSize(300, 50)
+timerFrame:SetPoint("TOP", showCheckbox, "BOTTOM", 0, -10)
+
+local timerText = timerFrame:CreateFontString(nil, "OVERLAY")
 timerText:SetFontObject("GameFontHighlightLarge")
-timerText:SetPoint("TOP", showCheckbox, "BOTTOM", 0, -10)
+timerText:SetPoint("CENTER")
 timerText:SetText("00:00:00")
 
 local waxCounterText = f:CreateFontString(nil, "OVERLAY")
 waxCounterText:SetFontObject("GameFontHighlight")
-waxCounterText:SetPoint("TOPLEFT", timerText, "BOTTOMLEFT", 0, -10)
+waxCounterText:SetPoint("TOPLEFT", timerFrame, "BOTTOMLEFT", 0, -10)
 waxCounterText:SetText("Odd Glob of Wax: 0")
 
 local tinderboxCounterText = f:CreateFontString(nil, "OVERLAY")
@@ -113,15 +117,20 @@ end
 local function OnEvent(self, event, ...)
     if event == "CHAT_MSG_LOOT" then
         local arg1 = ...
+        print("DEBUG: Chat message received - " .. arg1)
         local itemId, quantity = strmatch(arg1, "item:(%d+).-(%d*)")
         itemId = tonumber(itemId)
         quantity = tonumber(quantity) or 1
 
         local mapId = C_Map.GetBestMapForUnit("player")
         local position = C_Map.GetPlayerMapPosition(mapId, "player")
-        
+
+        print("DEBUG: Item ID - " .. itemId .. " Quantity - " .. quantity .. " Map ID - " .. mapId)
+
         if position then
             local x, y = position:GetXY()
+
+            print("DEBUG: Player position - x: " .. x .. " y: " .. y)
 
             -- check existing coords
             local shouldAdd = true
@@ -180,32 +189,36 @@ SlashCmdList["DIRT"] = function(msg)
 end
 
 -- minimap button
-local minimapButton = CreateFrame("Button", "DirtWaxTrackerMinimapButton", Minimap)
-minimapButton:SetSize(32, 32)
-minimapButton:SetFrameStrata("MEDIUM")
-minimapButton:SetPoint("TOPLEFT", Minimap, "TOPLEFT") 
+local function CreateMinimapButton()
+    local minimapButton = CreateFrame("Button", "DirtWaxTrackerMinimapButton", Minimap)
+    minimapButton:SetSize(32, 32)
+    minimapButton:SetFrameStrata("MEDIUM")
+    minimapButton:SetPoint("TOPLEFT", Minimap, "TOPLEFT") 
 
-local minimapButtonTexture = minimapButton:CreateTexture(nil, "BACKGROUND")
-minimapButtonTexture:SetTexture("Interface\\Icons\\INV_Ammo_FireTar")
-minimapButtonTexture:SetAllPoints(minimapButton)
+    local minimapButtonTexture = minimapButton:CreateTexture(nil, "BACKGROUND")
+    minimapButtonTexture:SetTexture("Interface\\Icons\\INV_Ammo_FireTar")
+    minimapButtonTexture:SetAllPoints(minimapButton)
 
-minimapButton:SetScript("OnClick", function(_, button)
-    if button == "LeftButton" then
-        if f:IsShown() then
-            f:Hide()
-        else
-            f:Show()
+    minimapButton:SetScript("OnClick", function(_, button)
+        if button == "LeftButton" then
+            if f:IsShown() then
+                f:Hide()
+            else
+                f:Show()
+            end
         end
-    end
-end)
+    end)
 
-minimapButton:SetScript("OnEnter", function(self)
-    GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-    GameTooltip:SetText("Dirt Wax Tracker")
-    GameTooltip:AddLine("Left Click to toggle frame", 1, 1, 1)
-    GameTooltip:Show()
-end)
+    minimapButton:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+        GameTooltip:SetText("Dirt Wax Tracker")
+        GameTooltip:AddLine("Left Click to toggle frame", 1, 1, 1)
+        GameTooltip:Show()
+    end)
 
-minimapButton:SetScript("OnLeave", function()
-    GameTooltip:Hide()
-end)
+    minimapButton:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+    end)
+end
+
+CreateMinimapButton()
