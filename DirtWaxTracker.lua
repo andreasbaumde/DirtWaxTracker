@@ -6,11 +6,15 @@ local RADIUS_THRESHOLD = 0.005  -- check existing node radius (default 0.005: ~0
 local f = CreateFrame("Frame", "DirtWaxTrackerFrame", UIParent, "BasicFrameTemplateWithInset")
 f:SetSize(300, 250)
 f:SetPoint("CENTER")
-f:Hide()
+f:EnableMouse(true)
+f:SetMovable(true)
+f:RegisterForDrag("LeftButton")
+f:SetScript("OnDragStart", f.StartMoving)
+f:SetScript("OnDragStop", f.StopMovingOrSizing)
 
 f.title = f:CreateFontString(nil, "OVERLAY")
-f.title:SetFontObject("GameFontHighlightLarge")
-f.title:SetPoint("TOP", 0, -10)
+f.title:SetFontObject("GameFontHighlight")
+f.title:SetPoint("TOP", 0, -5)
 f.title:SetText("Dirt Wax Tracker")
 
 local startButton = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
